@@ -17,6 +17,7 @@ async function api(method, url, body) {
 
 let expenses = [];
 let editingId = null;
+let filter = '';
 
 function showError(message) {
   $('#error').textContent = message || '';
@@ -25,6 +26,7 @@ function showError(message) {
 function fillCategories() {
   const options = CATEGORIES.map((c) => `<option>${c}</option>`).join('');
   $('#category').innerHTML = options;
+  $('#filter').innerHTML = '<option value="">Todas</option>' + options;
 }
 
 function renderList() {
@@ -55,6 +57,7 @@ async function loadSummary() {
 
 async function load() {
   let url = '/expenses';
+  if (filter) url += '?category=' + encodeURIComponent(filter);
   expenses = await api('GET', url);
   renderList();
   await loadSummary();
@@ -131,6 +134,10 @@ $('#budget-form').addEventListener('submit', async (event) => {
   }
 });
 
+$('#filter').addEventListener('change', async (event) => {
+  filter = event.target.value;
+  await load();
+});
 
 fillCategories();
 load().catch((err) => showError(err.message));
