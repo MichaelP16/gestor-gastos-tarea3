@@ -9,6 +9,18 @@
 <body>
   <header><h1>Gestor de Gastos</h1></header>
   <main>
+    <section class="card">
+      <h2>Presupuesto</h2>
+      <form id="budget-form" class="row">
+        <input id="budget" type="number" step="0.01" min="0" placeholder="Presupuesto total" required>
+        <button type="submit">Guardar presupuesto</button>
+      </form>
+      <div class="stats">
+        <div class="stat"><span>Presupuesto</span><strong id="stat-budget">0.00</strong></div>
+        <div class="stat"><span>Total gastado</span><strong id="stat-spent">0.00</strong></div>
+        <div class="stat"><span>Restante</span><strong id="stat-remaining">0.00</strong></div>
+      </div>
+    </section>
 
     <section class="card">
       <h2 id="form-title">Nuevo gasto</h2>
