@@ -13,10 +13,11 @@ function parseExpense(body, { partial = false } = {}) {
   }
   if (!partial || body.amount !== undefined) {
     const amount = Number(body.amount);
-    if (!Number.isFinite(amount) || amount <= 0) {
+    if (!Number.isFinite(amount) || Math.round(amount * 100) <= 0) {
       return { error: 'El monto debe ser un número mayor que 0' };
     }
-    data.amount = amount;
+    // Se redondea a 2 decimales para evitar montos como 0.1 + 0.2 = 0.30000000000000004
+    data.amount = Math.round(amount * 100) / 100;
   }
   if (!partial || body.category !== undefined) {
     const category = body.category === undefined ? 'Otros' : body.category;
