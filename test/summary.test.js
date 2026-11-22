@@ -7,11 +7,13 @@ before(async () => (api = await start()));
 after(() => api.close());
 
 test('calcula total gastado y restante', async () => {
-  await api.call('PUT', '/budget', { amount: 1000 });
-  await api.call('POST', '/expenses', { description: 'Super', amount: 300, category: 'Comida' });
-  await api.call('POST', '/expenses', { description: 'Bus', amount: 100, category: 'Transporte' });
+  const month = new Date().toISOString().slice(0, 7);
+  const date = `${month}-10`;
+  await api.call('PUT', '/budget', { amount: 1000, month });
+  await api.call('POST', '/expenses', { description: 'Super', amount: 300, category: 'Comida', date });
+  await api.call('POST', '/expenses', { description: 'Bus', amount: 100, category: 'Transporte', date });
 
-  const { data } = await api.call('GET', '/summary');
+  const { data } = await api.call('GET', `/summary?month=${month}`);
   assert.strictEqual(data.budget, 1000);
   assert.strictEqual(data.totalSpent, 400);
   assert.strictEqual(data.remaining, 600);

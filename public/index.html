@@ -10,24 +10,25 @@
   <header><h1>Gestor de Gastos</h1></header>
   <main>
     <section class="card">
-      <h2>Presupuesto</h2>
+      <h2>Presupuesto mensual</h2>
       <form id="budget-form" class="row">
-        <input id="budget" type="number" step="0.01" min="0" placeholder="Presupuesto total" required>
+        <input id="budget" type="number" step="0.01" min="0" placeholder="Presupuesto del mes" aria-label="Presupuesto del mes" required>
         <button type="submit">Guardar presupuesto</button>
       </form>
       <div class="stats">
-        <div class="stat"><span>Presupuesto</span><strong id="stat-budget">0.00</strong></div>
-        <div class="stat"><span>Total gastado</span><strong id="stat-spent">0.00</strong></div>
-        <div class="stat"><span>Restante</span><strong id="stat-remaining">0.00</strong></div>
+        <div class="stat"><span>Presupuesto del mes</span><strong id="stat-budget">RD$0.00</strong></div>
+        <div class="stat"><span>Gastado este mes</span><strong id="stat-spent">RD$0.00</strong></div>
+        <div class="stat"><span>Disponible este mes</span><strong id="stat-remaining">RD$0.00</strong></div>
       </div>
     </section>
 
     <section class="card">
       <h2 id="form-title">Nuevo gasto</h2>
       <form id="expense-form">
-        <input id="description" placeholder="Descripción" required>
+        <input id="description" placeholder="Descripción (máximo 40 caracteres)" maxlength="40" required>
         <input id="amount" type="number" step="0.01" min="0.01" placeholder="Monto" required>
-        <select id="category"></select>
+        <input id="expense-date" type="date" aria-label="Fecha del gasto" required>
+        <select id="category" aria-label="Categoría" required></select>
         <button type="submit" id="submit-btn">Agregar</button>
         <button type="button" id="cancel-btn" class="secondary" hidden>Cancelar</button>
       </form>
@@ -36,7 +37,18 @@
 
     <section class="card">
       <h2>Gastos</h2>
-      <div class="row">
+      <div class="period-toolbar">
+        <button id="previous-month" class="secondary" type="button" aria-label="Mes anterior">‹</button>
+        <strong id="selected-month"></strong>
+        <button id="next-month" class="secondary" type="button" aria-label="Mes siguiente">›</button>
+        <label for="period">Periodo:</label>
+        <select id="period">
+          <option value="month">Mes completo</option>
+          <option value="fortnight-1">Primera quincena</option>
+          <option value="fortnight-2">Segunda quincena</option>
+        </select>
+      </div>
+      <div class="row category-filter">
         <label for="filter">Filtrar por categoría:</label>
         <select id="filter"><option value="">Todas</option></select>
       </div>
@@ -49,6 +61,21 @@
         <tbody id="list"></tbody>
       </table>
       <p id="empty" class="empty" hidden>No hay gastos registrados.</p>
+    </section>
+
+    <section class="card monthly-card">
+      <h2>Estadísticas de <span id="statistics-month"></span></h2>
+      <div class="monthly-stats">
+        <div class="stat"><span>Total del mes</span><strong id="month-total">RD$0.00</strong></div>
+        <div class="stat"><span>Gasto promedio</span><strong id="month-average">RD$0.00</strong></div>
+        <div class="stat"><span>Comparación mensual</span><strong id="month-comparison">0.00%</strong></div>
+      </div>
+      <div class="month-totals">
+        <div><span id="current-month-label"></span><strong id="current-month-total">RD$0.00</strong></div>
+        <div><span id="previous-month-label"></span><strong id="previous-month-total">RD$0.00</strong></div>
+      </div>
+      <p id="month-summary" class="month-summary"></p>
+      <div id="category-breakdown" class="category-breakdown"></div>
     </section>
   </main>
   <script src="/app.js"></script>
