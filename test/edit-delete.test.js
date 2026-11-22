@@ -6,13 +6,22 @@ let api;
 before(async () => (api = await start()));
 after(() => api.close());
 
+const month = new Date().toISOString().slice(0, 7);
+const date = `${month}-10`;
+
 test('edita el monto y la categoría de un gasto', async () => {
-  await api.call('POST', '/expenses', { description: 'Taxi', amount: 300, category: 'Transporte' });
+  await api.call('PUT', '/budget', { amount: 450, month });
+  await api.call('POST', '/expenses', { description: 'Taxi', amount: 300, category: 'Transporte', date });
   const r = await api.call('PUT', '/expenses/1', { amount: 450, category: 'Otros' });
   assert.strictEqual(r.status, 200);
   assert.strictEqual(r.data.amount, 450);
   assert.strictEqual(r.data.category, 'Otros');
   assert.strictEqual(r.data.description, 'Taxi');
+});
+
+test('no permite editar un gasto por encima del presupuesto del mes', async () => {
+  const r = await api.call('PUT', '/expenses/1', { amount: 450.01 });
+  assert.strictEqual(r.status, 400);
 });
 
 test('editar un gasto inexistente devuelve 404', async () => {
