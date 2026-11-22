@@ -16,6 +16,7 @@ async function api(method, url, body) {
 }
 
 let expenses = [];
+let editingId = null;
 
 function showError(message) {
   $('#error').textContent = message || '';
@@ -34,6 +35,10 @@ function renderList() {
         <td>${esc(e.description)}</td>
         <td>${esc(e.category)}</td>
         <td>${money(e.amount)}</td>
+        <td>
+          <button data-action="edit" data-id="${e.id}" class="secondary">Editar</button>
+          <button data-action="delete" data-id="${e.id}" class="danger">Eliminar</button>
+        </td>
       </tr>`
     )
     .join('');
@@ -47,6 +52,43 @@ async function load() {
   renderList();
 }
 
+function resetForm() {
+  editingId = null;
+  $('#expense-form').reset();
+  $('#form-title').textContent = 'Nuevo gasto';
+  $('#submit-btn').textContent = 'Agregar';
+  $('#cancel-btn').hidden = true;
+}
+
+$('#cancel-btn').addEventListener('click', () => {
+  resetForm();
+  showError('');
+});
+
+$('#list').addEventListener('click', async (event) => {
+  const button = event.target.closest('button');
+  if (!button) return;
+  const id = Number(button.dataset.id);
+  try {
+    if (button.dataset.action === 'delete') {
+      if (!confirm('¿Eliminar este gasto?')) return;
+      await api('DELETE', `/expenses/${id}`);
+      if (editingId === id) resetForm();
+      await load();
+    } else if (button.dataset.action === 'edit') {
+      const e = expenses.find((x) => x.id === id);
+      editingId = id;
+      $('#description').value = e.description;
+      $('#amount').value = e.amount;
+      $('#category').value = e.category;
+      $('#form-title').textContent = 'Editar gasto #' + id;
+      $('#submit-btn').textContent = 'Guardar cambios';
+      $('#cancel-btn').hidden = false;
+    }
+  } catch (err) {
+    showError(err.message);
+  }
+});
 
 $('#expense-form').addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -57,6 +99,12 @@ $('#expense-form').addEventListener('submit', async (event) => {
   };
   try {
     showError('');
+    if (editingId !== null) {
+      await api('PUT', `/expenses/${editingId}`, data);
+      resetForm();
+      await load();
+      return;
+    }
     await api('POST', '/expenses', data);
     $('#expense-form').reset();
     await load();
