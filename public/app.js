@@ -45,11 +45,19 @@ function renderList() {
   $('#empty').hidden = expenses.length > 0;
 }
 
+async function loadSummary() {
+  const s = await api('GET', '/summary');
+  $('#stat-budget').textContent = money(s.budget);
+  $('#stat-spent').textContent = money(s.totalSpent);
+  $('#stat-remaining').textContent = money(s.remaining);
+  $('#stat-remaining').classList.toggle('over', s.remaining < 0);
+}
 
 async function load() {
   let url = '/expenses';
   expenses = await api('GET', url);
   renderList();
+  await loadSummary();
 }
 
 function resetForm() {
@@ -113,6 +121,15 @@ $('#expense-form').addEventListener('submit', async (event) => {
   }
 });
 
+$('#budget-form').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  try {
+    await api('PUT', '/budget', { amount: Number($('#budget').value) });
+    await loadSummary();
+  } catch (err) {
+    showError(err.message);
+  }
+});
 
 
 fillCategories();
