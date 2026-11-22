@@ -1,29 +1,92 @@
-# Gestor de Gastos / Presupuesto Personal
+# 💸 Gestor de Gastos
 
-Aplicación web + API REST (Node.js, sin dependencias externas) para registrar gastos,
-editarlos, filtrarlos por categoría y ver cuánto queda del presupuesto.
-Proyecto de la Tarea 3 de Programación III (Git y Git Flow).
+Aplicación web desarrollada con Node.js para registrar, consultar y analizar gastos
+personales. Permite administrar presupuestos mensuales, controlar el gasto disponible
+y comparar el comportamiento de diferentes meses.
 
-## Uso
+## Características Principales
 
-```bash
-npm start     # abre http://localhost:3000 en el navegador
-npm test      # corre las pruebas automáticas
+- **Presupuesto mensual compartido:** Ambas quincenas comparten el límite del mes.
+- **Registro estructurado:** Los gastos incluyen fecha, descripción de hasta 40 caracteres, categoría y monto.
+- **Validación de datos:** Todos los campos del gasto son obligatorios y las categorías están limitadas.
+- **Control del presupuesto:** Impide registrar o editar gastos que excedan lo disponible en el mes.
+- **Navegación por periodos:** Consulta mensual, primera quincena o segunda quincena, y navegación entre meses.
+- **Agrupación mensual:** La vista del mes suma los gastos de ambas quincenas.
+- **Edición y eliminación:** Gestión directa de los gastos registrados.
+- **Filtros por categoría:** Visualización rápida según el tipo de gasto.
+- **Estadísticas:** Totales, promedio, gasto por categoría y comparación con el mes anterior.
+
+## Tecnologías Utilizadas
+
+- **Lenguaje:** JavaScript
+- **Servidor:** Node.js HTTP
+- **Interfaz:** HTML5 y CSS3
+- **Cliente:** JavaScript mediante Fetch API
+- **Pruebas:** Node.js Test Runner
+- **Formato de datos:** JSON
+
+## Arquitectura
+
+```text
+gestor-gastos/
+├── public/
+│   ├── index.html
+│   ├── app.js
+│   └── style.css
+├── src/
+│   ├── server.js
+│   ├── store.js
+│   ├── validate.js
+│   └── handlers/
+└── test/
 ```
 
-## API
+La aplicación separa la interfaz, el servidor, el almacenamiento y los controladores
+de cada operación.
 
-| Método | Ruta                    | Descripción                          |
-|--------|-------------------------|--------------------------------------|
-| POST   | /expenses               | Registrar un gasto                   |
-| GET    | /expenses?category=X    | Listar gastos (filtro opcional)      |
-| PUT    | /expenses/:id           | Editar monto, categoría, etc.        |
-| DELETE | /expenses/:id           | Eliminar un gasto                    |
-| PUT    | /budget                 | Definir el presupuesto               |
-| GET    | /summary                | Total gastado, restante y por categoría |
+## Inicio Rápido
 
-## Flujo de ramas (Git Flow)
+### Requisitos
 
-`main` (producción) <- `qa` <- `dev` <- `feature/*` y `hotfix/*`
+- Node.js
+- npm
 
-Cada rama se integra con 3 Pull Requests: hacia `dev`, `qa` y `main`.
+### Ejecución
+
+```bash
+cd gestor-gastos
+npm start
+```
+
+Abrir `http://localhost:3000`.
+
+Para utilizar otro puerto:
+
+```powershell
+$env:PORT="3001"
+npm start
+```
+
+## Pruebas
+
+```bash
+cd gestor-gastos
+npm test
+```
+
+Las pruebas cubren registros, edición, eliminación, filtros, decimales,
+presupuestos, periodos mensuales y quincenales, y estadísticas.
+
+## API REST
+
+| Método | Ruta | Descripción |
+|:--|:--|:--|
+| `GET` | `/expenses?month=YYYY-MM&period=month\|fortnight-1\|fortnight-2&category=Y` | Filtra gastos por mes, quincena y categoría |
+| `POST` | `/expenses` | Registra un gasto con descripción, monto, categoría y fecha |
+| `PUT` | `/expenses/:id` | Actualiza un gasto |
+| `DELETE` | `/expenses/:id` | Elimina un gasto |
+| `PUT` | `/budget` | Guarda el presupuesto mensual (`amount` y `month`) |
+| `GET` | `/summary?month=YYYY-MM` | Obtiene totales y categorías del mes |
+
+Los periodos son `month`, `fortnight-1` y `fortnight-2`. La vista mensual reúne
+automáticamente los gastos de ambas quincenas.
