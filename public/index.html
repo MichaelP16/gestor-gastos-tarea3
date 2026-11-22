@@ -8,6 +8,31 @@
 </head>
 <body>
   <header><h1>Gestor de Gastos</h1></header>
-  <main><section class="card"><p>Proyecto en construcción.</p></section></main>
+  <main>
+
+    <section class="card">
+      <h2 id="form-title">Nuevo gasto</h2>
+      <form id="expense-form">
+        <input id="description" placeholder="Descripción" required>
+        <input id="amount" type="number" step="0.01" min="0.01" placeholder="Monto" required>
+        <select id="category"></select>
+        <button type="submit" id="submit-btn">Agregar</button>
+      </form>
+      <p id="error" class="error"></p>
+    </section>
+
+    <section class="card">
+      <h2>Gastos</h2>
+      <table>
+        <thead>
+          <tr><th>Fecha</th><th>Descripción</th><th>Categoría</th><th>Monto</th>
+          </tr>
+        </thead>
+        <tbody id="list"></tbody>
+      </table>
+      <p id="empty" class="empty" hidden>No hay gastos registrados.</p>
+    </section>
+  </main>
+  <script src="/app.js"></script>
 </body>
 </html>
